@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 
-class LoadData:
+class Load_Data:
     def __init__(self, csv_path, max_len = 10):
         self.max_len = max_len
         self.df = pd.read_csv(csv_path, sep = ",", header = None, skiprows=1)
@@ -46,7 +46,7 @@ class LoadData:
         print("Total bag of word: ", _object_lang.n_words)
         return _object_lang, _pairs
     
-    def IndexexFromSentence(self, sentence):
+    def indexesFromSentence(self, sentence):
         return [self.object_lang.word2index.get(word, self.object_lang.word2index["UNK"]) for word in sentence.split(" ")]
 
     def tensorFromSentence(self, sentence):
@@ -55,26 +55,31 @@ class LoadData:
         return torch.tensor(_indexes, dtype = torch.long, device = device).reshape(1,-1)
     def get_dataloader(self, batch_size):
         n = len(self.pairs)
-        input_ids = np.ones((n, self.max_len), dtype = np.int32)*self.object_lang.word2index["PAD"]
+        source_ids = np.ones((n, self.max_len), dtype = np.int32)*self.object_lang.word2index["PAD"]
+        src_valid_len = np.ones((n), dtype = np.int32)
         target_ids = np.ones((n, self.max_len), dtype = np.int32)*self.object_lang.word2index["PAD"]
 
         for idx, (src, tgt) in enumerate(self.pairs):
-            src_ids = indexesFromSentence(src)
-            tgt_ids = indexesFromSentence(tgt)
+            src_ids = self.indexesFromSentence(src)
+            tgt_ids = self.indexesFromSentence(tgt)
             
-            inp_ids.append(self.object_lang.word2index["EOS"])
+            src_ids.append(self.object_lang.word2index["EOS"])
             tgt_ids.append(self.object_lang.word2index["EOS"])
 
-            input_ids[idx, :len(inp_ids)] = inp_ids
+            src_valid_len[idx] = len(src_ids)
+            source_ids[idx, :len(src_ids)] = src_ids
             target_ids[idx, :len(tgt_ids)] = tgt_ids
 
-        train_data = TensorDataset(torch.LongTensor(input_ids))
+        train_data = TensorDataset(torch.LongTensor(source_ids).to(device),
+                                   torch.LongTensor(src_valid_len).to(device),
+                                   torch.LongTensor(target_ids).to(device))
         train_sampler = RandomSampler(train_data)
         train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=batch_size)
         return self.object_lang, train_dataloader
     
-    
-@add_func_class(LoadData)
+
+
+@add_func_class(Load_Data)
 def _norm_string(self, s):
     def _Unicode2Ascii(s):
         return ''.join(
@@ -113,6 +118,9 @@ class Lang:
         else:
             self.word2count[word] += 1
 
+    
+
+
 
 if __name__ == "__main__":
     HOST = socket.gethostbyname(socket.gethostname())
@@ -122,4 +130,4 @@ if __name__ == "__main__":
     
     DF_DIR = f"{WORK_DIR}/data/AI.csv"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(LoadData(DF_DIR).IndexexFromSentence("hello"))
+    print(next(iter(Load_Data(DF_DIR).get_dataloader(batch_size=32)[1])))
