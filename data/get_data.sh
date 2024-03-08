@@ -1,6 +1,3 @@
-#!/bin/sh
-set -x
+! kaggle datasets download narendrageek/mental-health-faq-for-chatbot
 
-[ ! -f cornell_movie_dialogs_corpus.zip ] && wget http://www.cs.cornell.edu/~cristian/data/cornell_movie_dialogs_corpus.zip
-[ ! -d "cornell movie-dialogs corpus" ] && unzip -x cornell_movie_dialogs_corpus.zip && rm -rf __MACOSX
-[ ! -d cornell ] && mv "cornell movie-dialogs corpus" cornell
+! unzip mental-health-faq-for-chatbot.zip
