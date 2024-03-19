@@ -16,7 +16,7 @@ class TransformerDecoder(nn.Module):
         for i in range(num_blks):
             self.blks.add_module("block"+str(i), TransformerDecoderBlock(num_hiddens, ffn_num_hiddens, num_heads, dropout, i))
 
-        self.dense = nn.LazyLinear(vocab_size)
+        self.dense = nn.Linear(num_hiddens, vocab_size)
 
     def init_state(self, enc_outputs, enc_valid_lens = None):
         return [enc_outputs, enc_valid_lens, [None] * self.num_blks]

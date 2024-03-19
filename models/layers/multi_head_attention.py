@@ -17,10 +17,10 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
         self.num_heads = num_heads
         self.attention = BahdanauAttention(num_hiddens, dropout)
-        self.W_q = nn.LazyLinear(num_hiddens, bias=bias)
-        self.W_k = nn.LazyLinear(num_hiddens, bias=bias)
-        self.W_v = nn.LazyLinear(num_hiddens, bias=bias)
-        self.W_o = nn.LazyLinear(num_hiddens, bias=bias)
+        self.W_q = nn.Linear(num_hiddens, num_hiddens, bias=bias)
+        self.W_k = nn.Linear(num_hiddens, num_hiddens, bias=bias)
+        self.W_v = nn.Linear(num_hiddens, num_hiddens, bias=bias)
+        self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values, valid_lens):
         queries = self.transpose_qkv(self.W_q(queries))
