@@ -29,15 +29,17 @@ def masked_softmax(X, valid_lens):  #@save
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
 class BahdanauAttention(nn.Module):
-    def __init__(self, num_hiddens, num_heads = 4, dropout = 0, **kwargs) -> None:
+    def __init__(self, num_hiddens, num_heads = 4, dropout = 0, **kwargs):
         super().__init__()
-        self.Wq = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
-        self.Wk = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
-        self.Wv = nn.Linear(num_hiddens, 1, bias=False)
+        self.w_q = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
+        self.w_k = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
+        self.w_v = nn.Linear(num_hiddens, 1, bias=False)
         self.dropout = nn.Dropout(dropout)
     
     def forward(self, queries, keys, values, valid_lens):
-        queries, keys = self.W_q(queries), self.W_k(keys)
+        queries = self.w_q(queries) 
+        keys = self.w_k(keys)
+
         features = queries.unsqueeze(2) + keys.unsqueeze(1)
         features = torch.tanh(features)
         scores = self.w_v(features).squeeze(-1)

@@ -18,7 +18,6 @@ class TransformerDecoderBlock(nn.Module):
 
     def forward(self, X, state):
         enc_outputs, enc_valid_lens = state[0], state[1]
-
         if state[2][self.i] is None:
             key_values = X
         else:

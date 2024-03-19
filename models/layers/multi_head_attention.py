@@ -16,7 +16,7 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, num_hiddens, num_heads, dropout, bias=False, **kwargs):
         super().__init__()
         self.num_heads = num_heads
-        self.attention = BahdanauAttention(num_hiddens, dropout)
+        self.attention = BahdanauAttention(num_hiddens)
         self.W_q = nn.Linear(num_hiddens, num_hiddens, bias=bias)
         self.W_k = nn.Linear(num_hiddens, num_hiddens, bias=bias)
         self.W_v = nn.Linear(num_hiddens, num_hiddens, bias=bias)

@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from models.blocks.encoder_layer import TransformerEncoderBlock
 from models.embedding.positional_encoding import PositionalEncoding
-
+import math
 
 
 class TransformerEncoder(nn.Module):

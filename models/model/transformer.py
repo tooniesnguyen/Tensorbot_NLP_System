@@ -10,10 +10,10 @@ class Transformer(nn.Module):
         super().__init__()
         self.encoder = TransformerEncoder(input_size, hidden_size).to(device)
         self.decoder = TransformerDecoder(vocab_size, hidden_size).to(device)
-    def forward(self, src, trg):
+    def forward(self, src, trg = None):
         encoder_src = self.encoder(src)
-        decpder_state = self.decoder.init_state(enc_outputs)
-        output = self.decoder(dec_state, trg)
+        decoder_state = self.decoder.init_state(encoder_src)
+        output = self.decoder(decoder_state, trg)
         return output
     
         
