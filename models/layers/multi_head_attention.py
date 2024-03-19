@@ -24,7 +24,7 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, queries, keys, values, valid_lens):
         queries = self.transpose_qkv(self.W_q(queries))
-        
+
         keys = self.transpose_qkv(self.W_k(keys))
         values = self.transpose_qkv(self.W_v(values))
 

@@ -7,7 +7,7 @@ import unicodedata
 import re
 import random
 
-from utils import *
+from .utils import *
 import sys
 import socket
 import os
@@ -16,7 +16,8 @@ from pathlib import Path
 
 
 class Load_Data:
-    def __init__(self, csv_path, max_len = 10):
+    def __init__(self, csv_path, max_len = 10, device = "CPU"):
+        self.device = device
         self.max_len = max_len
         self.df = pd.read_csv(csv_path, sep = ",", header = None, skiprows=1)
         self.df_filter = self.df.applymap(self._norm_string).values.tolist()
@@ -51,7 +52,7 @@ class Load_Data:
     def tensorFromSentence(self, sentence):
         _indexes = inddexesFrinSebtebce(self.object_lang, sentence)
         _indexes.append(self.object_lang.word2index["EOS"])
-        return torch.tensor(_indexes, dtype = torch.long, device = device).reshape(1,-1)
+        return torch.tensor(_indexes, dtype = torch.long, device = self.device).reshape(1,-1)
     def get_dataloader(self, batch_size):
         n = len(self.pairs)
         source_ids = np.ones((n, self.max_len), dtype = np.int32)*self.object_lang.word2index["PAD"]
@@ -69,9 +70,9 @@ class Load_Data:
             source_ids[idx, :len(src_ids)] = src_ids
             target_ids[idx, :len(tgt_ids)] = tgt_ids
 
-        train_data = TensorDataset(torch.LongTensor(source_ids).to(device),
-                                   torch.LongTensor(src_valid_len).to(device),
-                                   torch.LongTensor(target_ids).to(device))
+        train_data = TensorDataset(torch.LongTensor(source_ids).to(self.device),
+                                   torch.LongTensor(src_valid_len).to(self.device),
+                                   torch.LongTensor(target_ids).to(self.device))
         train_sampler = RandomSampler(train_data)
         train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=batch_size)
         return self.object_lang, train_dataloader

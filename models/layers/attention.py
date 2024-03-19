@@ -29,11 +29,11 @@ def masked_softmax(X, valid_lens):  #@save
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
 class BahdanauAttention(nn.Module):
-    def __init__(self, num_hiddens, num_heads = 1, dropout = 0, **kwargs) -> None:
+    def __init__(self, num_hiddens, num_heads = 4, dropout = 0, **kwargs) -> None:
         super().__init__()
         self.Wq = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
         self.Wk = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
-        self.Wv = nn.LazyLinear(num_hiddens, 1, bias=False)
+        self.Wv = nn.Linear(num_hiddens, 1, bias=False)
         self.dropout = nn.Dropout(dropout)
     
     def forward(self, queries, keys, values, valid_lens):
