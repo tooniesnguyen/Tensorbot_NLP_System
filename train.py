@@ -6,7 +6,7 @@ from utils.utils import count_parameters
 from torch.utils.tensorboard import SummaryWriter
 
 # default `log_dir` is "runs" - we'll be more specific here
-writer = SummaryWriter('runs/fashion_mnist_experiment_1')
+writer = SummaryWriter('runs/nlp_ex1')
 
 
 QA_data = Load_Data(csv_path=csv_path, max_len=MAX_LENGTH, device = device)
@@ -19,9 +19,6 @@ model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size, voca
 count_parameters(model)
 
 x = torch.randint(low=0, high=100, size=(1, 10), dtype=torch.int).to(device)
-y = model(x)
 
-make_dot(y.mean(),
-         params=dict(model.named_parameters()),
-         show_attrs=True,
-         show_saved=True).render("MyPyTorchModel_torchviz", format="png")
+writer.add_graph(model, x)
+writer.close()
