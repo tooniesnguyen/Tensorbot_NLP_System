@@ -13,8 +13,11 @@ MAX_LENGTH = 10
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class TransformerDecoder(nn.Module):
-    def __init__(self, vocab_size, num_hiddens, ffn_num_hiddens = 64, num_heads = 4, num_blks = 2, dropout = 0.1):
+    def __init__(self, vocab_size, num_hiddens,max_len = 10, device = "cpu", sos_token = 0, ffn_num_hiddens = 64, num_heads = 4, num_blks = 2, dropout = 0.1):
         super().__init__()
+        self.max_len = max_len
+        self.sos_token = sos_token
+        self.device = device
         self.num_hiddens = num_hiddens
         self.num_blks = num_blks
         self.embedding = nn.Embedding(vocab_size, num_hiddens)
@@ -31,7 +34,7 @@ class TransformerDecoder(nn.Module):
     def forward(self, state, target_tensor=None):
         batch_size = state[0].shape[0]
         decoder_outputs = []
-        decoder_input = torch.empty(batch_size, 1, dtype=torch.long, device=device).fill_(SOS_token)
+        decoder_input = torch.empty(batch_size, 1, dtype=torch.long, device=self.device).fill_(self.sos_token)
         if target_tensor is not None:
             decoder_input = torch.cat((decoder_input, target_tensor), dim=1)
             decoder_outputs, _ = self.forward_step(decoder_input, state)
@@ -40,7 +43,7 @@ class TransformerDecoder(nn.Module):
 
             decoder_outputs = decoder_outputs[:,:-1,:]
         else:
-            for i in range(MAX_LENGTH):
+            for i in range(self.max_len):
                 decoder_output, state = self.forward_step(decoder_input, state)
                 decoder_outputs.append(decoder_output)
                 _, topi = decoder_output.topk(1)
