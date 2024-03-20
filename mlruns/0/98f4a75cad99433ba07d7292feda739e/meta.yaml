@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/98f4a75cad99433ba07d7292feda739e/artifacts
+end_time: 1710916277817
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 98f4a75cad99433ba07d7292feda739e
+run_name: grandiose-skink-526
+run_uuid: 98f4a75cad99433ba07d7292feda739e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710916277810
+status: 4
+tags: []
+user_id: toonies

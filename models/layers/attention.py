@@ -5,15 +5,17 @@ import torch.nn.functional as F
 
 
 
+def sequence_mask(X, valid_len, value=0):
+    
+    maxlen = X.size(1)
+    mask = torch.arange((maxlen), dtype=torch.float32,
+                        device=X.device)[None, :] < valid_len[:, None]
+    X[~mask] = value
+    return X
+
 def masked_softmax(X, valid_lens):  #@save
     """Perform softmax operation by masking elements on the last axis."""
     # X: 3D tensor, valid_lens: 1D or 2D tensor
-    def _sequence_mask(X, valid_len, value=0):
-        maxlen = X.size(1)
-        mask = torch.arange((maxlen), dtype=torch.float32,
-                            device=X.device)[None, :] < valid_len[:, None]
-        X[~mask] = value
-        return X
 
     if valid_lens is None:
         return nn.functional.softmax(X, dim=-1)
@@ -25,11 +27,11 @@ def masked_softmax(X, valid_lens):  #@save
             valid_lens = valid_lens.reshape(-1)
         # On the last axis, replace masked elements with a very large negative
         # value, whose exponentiation outputs 0
-        X = _sequence_mask(X.reshape(-1, shape[-1]), valid_lens, value=-1e6)
+        X = sequence_mask(X.reshape(-1, shape[-1]), valid_lens, value=-1e6)
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
 class BahdanauAttention(nn.Module):
-    def __init__(self, num_hiddens, num_heads = 4, dropout = 0, **kwargs):
+    def __init__(self, num_hiddens, num_heads = 4, dropout = 0.1, **kwargs):
         super().__init__()
         self.w_q = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)
         self.w_k = nn.Linear(int(num_hiddens/num_heads), num_hiddens, bias = False)

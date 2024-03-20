@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/ef3b60edfbf34665b80c518f41f2c381/artifacts
+end_time: 1710917149679
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ef3b60edfbf34665b80c518f41f2c381
+run_name: delicate-frog-211
+run_uuid: ef3b60edfbf34665b80c518f41f2c381
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710917145272
+status: 4
+tags: []
+user_id: toonies

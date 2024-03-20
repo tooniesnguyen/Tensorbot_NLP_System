@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/254c2fec968a43f3839ffe21d474a654/artifacts
+end_time: 1710916294308
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 254c2fec968a43f3839ffe21d474a654
+run_name: righteous-pug-210
+run_uuid: 254c2fec968a43f3839ffe21d474a654
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710916289711
+status: 4
+tags: []
+user_id: toonies

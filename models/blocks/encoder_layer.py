@@ -12,7 +12,7 @@ class TransformerEncoderBlock(nn.Module):
         self.ffn = PositionWiseFFN(ffn_num_hiddens, num_hiddens)
         self.addnorm2 = AddNorm(num_hiddens, dropout)
 
-    def forward(self, X, valid_lens):
+    def forward(self, X, valid_lens = None):
         Y = self.addnorm1(X, self.attention(X, X, X, valid_lens))
         return self.addnorm2(Y, self.ffn(Y))
     

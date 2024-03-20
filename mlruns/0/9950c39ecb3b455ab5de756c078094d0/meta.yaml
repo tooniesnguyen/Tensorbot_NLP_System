@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/9950c39ecb3b455ab5de756c078094d0/artifacts
+end_time: 1710916850578
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9950c39ecb3b455ab5de756c078094d0
+run_name: fortunate-chimp-44
+run_uuid: 9950c39ecb3b455ab5de756c078094d0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710916850570
+status: 4
+tags: []
+user_id: toonies

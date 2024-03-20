@@ -2,30 +2,15 @@ import torch
 from models.model.transformer import Transformer
 from utils.data_loader import Load_Data, Lang
 from config import *
-from utils.utils import count_parameters
+from utils.utils import count_parameters, timeSince
 import torch.nn as nn
 from torch import optim
-
 import time
 import math
 
-
-
-
-# count_parameters(model)
-
-
-def asMinutes(s):
-    m = math.floor(s / 60)
-    s -= m * 60
-    return '%dm %ds' % (m, s)
-
-def timeSince(since, percent):
-    now = time.time()
-    s = now - since
-    es = s / (percent)
-    rs = es - s
-    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
+import mlflow
+import mlflow.pytorch
+from mlflow.models import infer_signature
 
 def train_epoch(dataloader, model, model_optimizer, criterion):
     total_loss = 0
@@ -79,6 +64,9 @@ def run():
     
     train(train_dataloader, model, 20)
     
+    with mlflow.start_run() as run:
+        mlflow.pytorch.save_model(model, "runs")
+
     
 if __name__ == "__main__":
     run()

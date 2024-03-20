@@ -1,5 +1,5 @@
 import time
-
+import math
 
 from prettytable import PrettyTable
 
@@ -29,3 +29,15 @@ def add_func_class(Class):
     def wrapper(obj):
         setattr(Class, obj.__name__, obj)
     return wrapper
+
+def asMinutes(s):
+    m = math.floor(s / 60)
+    s -= m * 60
+    return '%dm %ds' % (m, s)
+
+def timeSince(since, percent):
+    now = time.time()
+    s = now - since
+    es = s / (percent)
+    rs = es - s
+    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))

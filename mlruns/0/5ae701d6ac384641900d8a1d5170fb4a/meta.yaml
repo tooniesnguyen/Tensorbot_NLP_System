@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/5ae701d6ac384641900d8a1d5170fb4a/artifacts
+end_time: 1710917435714
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 5ae701d6ac384641900d8a1d5170fb4a
+run_name: learned-auk-659
+run_uuid: 5ae701d6ac384641900d8a1d5170fb4a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710917431169
+status: 4
+tags: []
+user_id: toonies
