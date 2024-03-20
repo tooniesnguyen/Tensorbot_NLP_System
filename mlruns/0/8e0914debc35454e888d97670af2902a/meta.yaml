@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/8e0914debc35454e888d97670af2902a/artifacts
+end_time: 1710921041067
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8e0914debc35454e888d97670af2902a
+run_name: delightful-gnat-494
+run_uuid: 8e0914debc35454e888d97670af2902a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710921036649
+status: 3
+tags: []
+user_id: toonies

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/7a3e7fb942894e2b9c152d0ad0e17c76/artifacts
+end_time: 1710919324018
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7a3e7fb942894e2b9c152d0ad0e17c76
+run_name: bouncy-shad-933
+run_uuid: 7a3e7fb942894e2b9c152d0ad0e17c76
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710919318458
+status: 3
+tags: []
+user_id: toonies

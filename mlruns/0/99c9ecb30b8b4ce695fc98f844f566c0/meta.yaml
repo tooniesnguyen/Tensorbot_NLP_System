@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/99c9ecb30b8b4ce695fc98f844f566c0/artifacts
+end_time: 1710920188004
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 99c9ecb30b8b4ce695fc98f844f566c0
+run_name: lyrical-penguin-680
+run_uuid: 99c9ecb30b8b4ce695fc98f844f566c0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710920174112
+status: 3
+tags: []
+user_id: toonies

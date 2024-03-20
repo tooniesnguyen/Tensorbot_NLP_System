@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/cfec8cb3b931422780bbd03b7ff55617/artifacts
+end_time: 1710920216197
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: cfec8cb3b931422780bbd03b7ff55617
+run_name: colorful-conch-725
+run_uuid: cfec8cb3b931422780bbd03b7ff55617
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710920207448
+status: 3
+tags: []
+user_id: toonies

@@ -7,10 +7,17 @@ import torch.nn as nn
 from torch import optim
 import time
 import math
+import shutil
+import os
+import warnings 
+warnings.filterwarnings('ignore') 
 
 import mlflow
 import mlflow.pytorch
 from mlflow.models import infer_signature
+
+mlflow.pytorch.autolog()
+
 
 def train_epoch(dataloader, model, model_optimizer, criterion):
     total_loss = 0
@@ -49,6 +56,7 @@ def train(train_dataloader, model, n_epochs, learning_rate=0.001,
         
         if epoch % print_every == 0:
             print_loss_avg = print_loss_total / print_every
+            mlflow.log_metric("val_loss", print_loss_avg)
             print_loss_total = 0
             print('%s (%d %d%%) %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg))
@@ -62,10 +70,12 @@ def run():
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
     
-    train(train_dataloader, model, 20)
+    train(train_dataloader, model, 10, print_every= 10)
     
-    with mlflow.start_run() as run:
-        mlflow.pytorch.log_model(model, "runs")
+    
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    mlflow.pytorch.save_model(model, path)
 
     
 if __name__ == "__main__":

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/eb52a56905594515b5ccf3bb2e042a3d/artifacts
+end_time: 1710919675400
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: eb52a56905594515b5ccf3bb2e042a3d
+run_name: shivering-bass-746
+run_uuid: eb52a56905594515b5ccf3bb2e042a3d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710919570227
+status: 3
+tags: []
+user_id: toonies
