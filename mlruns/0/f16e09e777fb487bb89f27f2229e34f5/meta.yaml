@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/f16e09e777fb487bb89f27f2229e34f5/artifacts
+end_time: 1710924363291
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f16e09e777fb487bb89f27f2229e34f5
+run_name: sassy-lamb-591
+run_uuid: f16e09e777fb487bb89f27f2229e34f5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710924359030
+status: 3
+tags: []
+user_id: toonies

@@ -50,7 +50,7 @@ class Load_Data:
         return [self.object_lang.word2index.get(word, self.object_lang.word2index["UNK"]) for word in sentence.split(" ")]
 
     def tensorFromSentence(self, sentence):
-        _indexes = inddexesFrinSebtebce(self.object_lang, sentence)
+        _indexes = self.indexesFromSentence(sentence)
         _indexes.append(self.object_lang.word2index["EOS"])
         return torch.tensor(_indexes, dtype = torch.long, device = self.device).reshape(1,-1)
     def get_dataloader(self, batch_size):

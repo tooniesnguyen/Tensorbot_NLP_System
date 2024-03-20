@@ -9,6 +9,7 @@ import time
 import math
 import shutil
 import os
+import random
 import warnings 
 warnings.filterwarnings('ignore') 
 
@@ -60,6 +61,36 @@ def train(train_dataloader, model, n_epochs, learning_rate=0.001,
             print_loss_total = 0
             print('%s (%d %d%%) %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg))
+def evaluate(model, sentence, obj_data):
+    with torch.no_grad():
+        input_tensor = obj_data.tensorFromSentence(sentence)
+
+        decoder_outputs= model(input_tensor)
+
+        _, topi = decoder_outputs.topk(1)
+        decoded_ids = topi.squeeze()
+
+        decoded_words = []
+        for idx in decoded_ids:
+            if idx.item() == EOS_token:
+                decoded_words.append('<EOS>')
+                break
+            decoded_words.append(obj_data.object_lang.index2word[idx.item()])
+    return decoded_words
+
+
+def evaluateRandomly(model,obj_data, n=10):
+    pairs = obj_data.pairs
+    print(pairs[0][0])
+    for i in range(n):
+        pair = random.choice(pairs)
+        print('>', pair[0])
+        print('=', pair[1])
+        output_words = evaluate(model, pair[0], obj_data)
+        output_sentence = ' '.join(output_words)
+        print('<', output_sentence)
+        print('')
+
 
 def run():
     # x = torch.randint(low=0, high=100, size=(1, 10), dtype=torch.int).to(device)
@@ -70,12 +101,17 @@ def run():
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
     
-    train(train_dataloader, model, 10, print_every= 10)
+    train(train_dataloader, model, 100, print_every= 10)
     
     
     if os.path.exists(path):
         shutil.rmtree(path)
     mlflow.pytorch.save_model(model, path)
+    
+    torch.save(model, PATH_SAVE)
+    
+    # model.eval()
+    # evaluateRandomly(model, QA_data)
 
     
 if __name__ == "__main__":

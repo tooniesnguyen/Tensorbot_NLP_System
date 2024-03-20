@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/9eb57c6e09364768b68fb21a82e1d3b9/artifacts
+end_time: 1710924890790
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9eb57c6e09364768b68fb21a82e1d3b9
+run_name: colorful-finch-527
+run_uuid: 9eb57c6e09364768b68fb21a82e1d3b9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710924877372
+status: 3
+tags: []
+user_id: toonies

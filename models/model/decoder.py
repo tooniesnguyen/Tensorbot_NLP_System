@@ -4,13 +4,6 @@ from models.blocks.decoder_layer import TransformerDecoderBlock
 from models.embedding.positional_encoding import PositionalEncoding
 import math
 import torch.nn.functional as F
-SOS_token = 0
-EOS_token = 1
-
-
-# model parameter setup
-MAX_LENGTH = 10
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class TransformerDecoder(nn.Module):
     def __init__(self, vocab_size, num_hiddens,max_len = 10, device = "cpu", sos_token = 0, ffn_num_hiddens = 64, num_heads = 4, num_blks = 2, dropout = 0.1):

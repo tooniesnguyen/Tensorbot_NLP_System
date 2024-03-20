@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/7120d74cbf974f108457c106d54973cd/artifacts
+end_time: 1710924351444
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7120d74cbf974f108457c106d54973cd
+run_name: popular-squirrel-431
+run_uuid: 7120d74cbf974f108457c106d54973cd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710924338479
+status: 3
+tags: []
+user_id: toonies

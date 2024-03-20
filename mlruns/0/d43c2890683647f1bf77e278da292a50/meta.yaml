@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/d43c2890683647f1bf77e278da292a50/artifacts
+end_time: 1710924439919
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d43c2890683647f1bf77e278da292a50
+run_name: intelligent-crow-919
+run_uuid: d43c2890683647f1bf77e278da292a50
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710924435648
+status: 3
+tags: []
+user_id: toonies

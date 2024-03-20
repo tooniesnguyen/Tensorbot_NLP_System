@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/f379d8751618477688b32d2eb501d058/artifacts
+end_time: 1710924401140
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f379d8751618477688b32d2eb501d058
+run_name: abundant-yak-592
+run_uuid: f379d8751618477688b32d2eb501d058
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1710924396886
+status: 3
+tags: []
+user_id: toonies
