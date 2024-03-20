@@ -1,3 +1,4 @@
+artifact_path: runs
 flavors:
   python_function:
     config:
@@ -15,5 +16,6 @@ flavors:
     pytorch_version: 1.12.0+cu102
 mlflow_version: 2.10.0
 model_size_bytes: 3913907
-model_uuid: 0cfdfcc831194b7a809472b14a883dd9
-utc_time_created: '2024-03-20 06:52:22.663014'
+model_uuid: 890302639c464f72ae173854484d05eb
+run_id: 1df4b3811f45439a98362506e5ee28ed
+utc_time_created: '2024-03-20 07:05:10.655035'

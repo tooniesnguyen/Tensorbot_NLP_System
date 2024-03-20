@@ -65,7 +65,7 @@ def run():
     train(train_dataloader, model, 20)
     
     with mlflow.start_run() as run:
-        mlflow.pytorch.save_model(model, "runs")
+        mlflow.pytorch.log_model(model, "runs")
 
     
 if __name__ == "__main__":
