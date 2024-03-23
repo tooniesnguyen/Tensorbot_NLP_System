@@ -14,8 +14,9 @@ WORK_DIR = os.path.dirname(ROOT)
 csv_path = f"{WORK_DIR}/Tensorbot_NLP/data/AI.csv"
 json_path = f"{WORK_DIR}/Tensorbot_NLP/data/train-v2.0.json"
 dict_path = f"{WORK_DIR}/Tensorbot_NLP/data/dicts/lang_obj.pkl"
+PATH_SAVE = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask"
+
 path = "runs"
-PATH_SAVE = f"{WORK_DIR}/Tensorbot_NLP/runs/best.pth"
 SOS_token = 0
 EOS_token = 1
 

@@ -57,15 +57,23 @@ def train(train_dataloader, model, n_epochs, learning_rate=0.001,
         
         if epoch % print_every == 0:
             print_loss_avg = print_loss_total / print_every
+            
+            ######################### PLOT MLFLOW #######################
             mlflow.log_metric("val_loss", print_loss_avg)
+            
+            #############################################################
             print_loss_total = 0
             print('%s (%d %d%%) %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg))
+            
+            ###################### SAVE MODEL ##########################
+            name_file_pth = f"{PATH_SAVE}/epoch{str(epoch)}.pth"
+            torch.save(model, name_file_pth)
+            print("Saved model successfull")
+            ############################################################
 
 def run():
-    # x = torch.randint(low=0, high=100, size=(1, 10), dtype=torch.int).to(device)
-    # y = model(x, torch.tensor([2], device=device))
-    # print("y shape", y.shape)
+
     QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
@@ -73,16 +81,11 @@ def run():
     
     train(train_dataloader, model, 100, print_every= 10)
     
-    
     if os.path.exists(path):
         shutil.rmtree(path)
     mlflow.pytorch.save_model(model, path)
     
     torch.save(model, PATH_SAVE)
-    
-    # model.eval()
-    # evaluateRandomly(model, QA_data)
-
     
 if __name__ == "__main__":
     run()

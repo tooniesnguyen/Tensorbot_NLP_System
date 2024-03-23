@@ -65,14 +65,6 @@ def run():
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
         
-        
-    # with mlflow.start_run() as run:
-    #     mlflow.pytorch.log_model(model, "runs")
-        
-    # model_uri = f"runs:/{run.info.run_id}/runs"
-    # loaded_model = mlflow.pytorch.load_model(model_uri)
-    # loaded_model.eval()
-    
     model = torch.load(PATH_SAVE)
     model.to(device)
     model.eval()
