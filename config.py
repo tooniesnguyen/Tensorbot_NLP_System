@@ -5,6 +5,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 csv_path = "/home/toonies/Learn/Tensorbot_NLP/data/AI.csv"
+json_path = "/home/toonies/Learn/Tensorbot_NLP/data/train-v2.0.json"
 path = "runs"
 PATH_SAVE = "/home/toonies/Learn/Tensorbot_NLP/runs/best.pth"
 SOS_token = 0
