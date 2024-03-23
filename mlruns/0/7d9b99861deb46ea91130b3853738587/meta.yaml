@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/7d9b99861deb46ea91130b3853738587/artifacts
+end_time: 1711228081094
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7d9b99861deb46ea91130b3853738587
+run_name: selective-deer-243
+run_uuid: 7d9b99861deb46ea91130b3853738587
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711228072066
+status: 3
+tags: []
+user_id: toonies

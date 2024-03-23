@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/5270f1c1b4ea4e93b70fb97a6c42faaa/artifacts
+end_time: 1711227515408
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 5270f1c1b4ea4e93b70fb97a6c42faaa
+run_name: dazzling-deer-662
+run_uuid: 5270f1c1b4ea4e93b70fb97a6c42faaa
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711227515401
+status: 3
+tags: []
+user_id: toonies

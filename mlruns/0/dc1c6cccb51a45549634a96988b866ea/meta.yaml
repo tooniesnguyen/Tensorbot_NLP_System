@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/dc1c6cccb51a45549634a96988b866ea/artifacts
+end_time: 1711228037360
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: dc1c6cccb51a45549634a96988b866ea
+run_name: nebulous-zebra-392
+run_uuid: dc1c6cccb51a45549634a96988b866ea
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711228028506
+status: 3
+tags: []
+user_id: toonies

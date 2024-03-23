@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/82074ef75ee34ee29e6acb22d30a099d/artifacts
+end_time: 1711227903998
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 82074ef75ee34ee29e6acb22d30a099d
+run_name: skillful-eel-543
+run_uuid: 82074ef75ee34ee29e6acb22d30a099d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711227903990
+status: 3
+tags: []
+user_id: toonies

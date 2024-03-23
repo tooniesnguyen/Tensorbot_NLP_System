@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/6484c251c4b14e2a8b40450048e3ba6d/artifacts
+end_time: 1711227859127
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6484c251c4b14e2a8b40450048e3ba6d
+run_name: overjoyed-skink-714
+run_uuid: 6484c251c4b14e2a8b40450048e3ba6d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711227845983
+status: 3
+tags: []
+user_id: toonies
