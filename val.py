@@ -2,7 +2,8 @@ import torch
 from models.model.transformer import Transformer
 from utils.data_loader import Load_Data, Lang
 from config import *
-from utils.utils import count_parameters, timeSince
+from utils.utils import count_parameters, timeSince, calc_bleu_many, bleu, calc_bleu
+from nltk.tokenize import word_tokenize
 import torch.nn as nn
 from torch import optim
 import time
@@ -45,6 +46,9 @@ def evaluateRandomly(model,obj_data, n=10):
         output_words = evaluate(model, pair[0], obj_data)
         output_sentence = ' '.join(output_words)
         print('<', output_sentence)
+        print("Bredict Word tokenize ", output_sentence[:-5])
+        print("Target  word tokenize ", pair[1])
+        print("Bleu score ", calc_bleu(output_sentence[:-5], pair[1]))
         print('')
 
 
