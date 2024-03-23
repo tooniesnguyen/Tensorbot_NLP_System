@@ -15,5 +15,5 @@ flavors:
     pytorch_version: 1.12.0+cu102
 mlflow_version: 2.10.0
 model_size_bytes: 3913907
-model_uuid: 5184ea7c76b2441fa50415cb57b298da
-utc_time_created: '2024-03-20 09:01:23.101934'
+model_uuid: 96e463c58df149008aff27400db806a7
+utc_time_created: '2024-03-23 12:47:32.024652'

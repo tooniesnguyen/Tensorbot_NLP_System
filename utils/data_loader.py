@@ -13,26 +13,42 @@ import socket
 import os
 from pathlib import Path
 import json
-
+import pickle
 
 class Load_Data:
-    def __init__(self, data_path, max_len = 10, device = "CPU", type_data = "json"):
+    def __init__(self, data_path = None, dict_path = None,save_dict = True, mode_load = "train", type_data = "json" , max_len = 10, device = "CPU"):
         self.device = device
         self.max_len = max_len
-        if type_data == "csv":
-            self.df = pd.read_csv(data_path, sep = ",", header = None, skiprows=1)
-            self.df_filter = self.df.applymap(self._norm_string).values.tolist()
-        else:
-            self.df_filter = self.read_json(data_path)
-        self.object_lang, self.pairs = self.PrepareData()
+        if mode_load == "train":
+            if type_data == "csv":
+                self.df = pd.read_csv(data_path, sep = ",", header = None, skiprows=1)
+                self.df_filter = self.df.applymap(self._norm_string).values.tolist()
+            elif type_data == "json":
+                self.df_filter = self.read_json(data_path)
+            
+        if save_dict:
+            self.object_lang, self.pairs = self.PrepareData(dict_path)
+        elif not save_dict :
+            self.object_lang = self._load_lang_object(dict_path)
+            if mode_load == "train":
+                self.pairs = self.PrepareDevData(dict_path)
+            
+            
         
     def _filter_pair(self, pair):
         return len(pair[0].split(' ')) < self.max_len and \
             len(pair[1].split(' ')) < self.max_len 
     def _filter_pairs(self, pairs):
         return [pair for pair in pairs if self._filter_pair(pair)]
-
-    def PrepareData(self, name = "English"):
+    
+    def PrepareDevData(self, save_path):
+        _pairs = self.df_filter
+        print("Read %s sentence pairs" % len(_pairs))
+        _pairs = self._filter_pairs(_pairs)
+        print("Trimmed to %s sentence pairs" % len(_pairs))
+        return _pairs
+    
+    def PrepareData(self, save_path, name = "English"):
         '''
         Input must be dataframe fillter just two column Q&A
         '''
@@ -47,13 +63,28 @@ class Load_Data:
             
         print("Counted words: ")
         print("Total bag of word: ", _object_lang.n_words)
+        self._save_lang_object(_object_lang, save_path)
+        print("Saved successful dictionary")
         return _object_lang, _pairs
     
-    def indexesFromSentence(self, sentence):
+    
+    
+    def _save_lang_object(self, lang_obj, dict_path):
+        with open(dict_path, "wb") as file:
+            pickle.dump(lang_obj, file)
+    
+    def _load_lang_object(self,dict_path):
+        with open(dict_path, 'rb') as file:
+            lang_obj = pickle.load(file)
+        print("Load Lang Object Succcessful")
+        return lang_obj
+    
+    
+    def _indexesFromSentence(self, sentence):
         return [self.object_lang.word2index.get(word, self.object_lang.word2index["#UNK"]) for word in sentence.split(" ")]
 
     def tensorFromSentence(self, sentence):
-        _indexes = self.indexesFromSentence(sentence)
+        _indexes = self._indexesFromSentence(sentence)
         _indexes.append(self.object_lang.word2index["#END"])
         return torch.tensor(_indexes, dtype = torch.long, device = self.device).reshape(1,-1)
     def get_dataloader(self, batch_size):
@@ -63,8 +94,8 @@ class Load_Data:
         target_ids = np.ones((n, self.max_len), dtype = np.int32)*self.object_lang.word2index["#PAD"]
 
         for idx, (src, tgt) in enumerate(self.pairs):
-            src_ids = self.indexesFromSentence(src)
-            tgt_ids = self.indexesFromSentence(tgt)
+            src_ids = self._indexesFromSentence(src)
+            tgt_ids = self._indexesFromSentence(tgt)
             
             src_ids.append(self.object_lang.word2index["#END"])
             tgt_ids.append(self.object_lang.word2index["#END"])

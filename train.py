@@ -66,7 +66,7 @@ def run():
     # x = torch.randint(low=0, high=100, size=(1, 10), dtype=torch.int).to(device)
     # y = model(x, torch.tensor([2], device=device))
     # print("y shape", y.shape)
-    QA_data = Load_Data(data_path=json_path, max_len=MAX_LENGTH, device = device)
+    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
