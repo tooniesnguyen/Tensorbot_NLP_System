@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/d6187d31fb9d4a22a6834dd5d8f0b824/artifacts
+end_time: 1711259991433
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d6187d31fb9d4a22a6834dd5d8f0b824
+run_name: adorable-shrike-706
+run_uuid: d6187d31fb9d4a22a6834dd5d8f0b824
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711259978131
+status: 3
+tags: []
+user_id: toonies

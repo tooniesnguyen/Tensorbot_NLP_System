@@ -31,7 +31,7 @@ class Load_Data:
         elif not save_dict :
             self.object_lang = self._load_lang_object(dict_path)
             if mode_load == "train":
-                self.pairs = self.PrepareDevData(dict_path)
+                self.pairs = self.PrepareDevData()
             
             
         
@@ -41,7 +41,7 @@ class Load_Data:
     def _filter_pairs(self, pairs):
         return [pair for pair in pairs if self._filter_pair(pair)]
     
-    def PrepareDevData(self, save_path):
+    def PrepareDevData(self):
         _pairs = self.df_filter
         print("Read %s sentence pairs" % len(_pairs))
         _pairs = self._filter_pairs(_pairs)

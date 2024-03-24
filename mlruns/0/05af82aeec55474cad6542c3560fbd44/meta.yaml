@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/05af82aeec55474cad6542c3560fbd44/artifacts
+end_time: 1711261252625
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 05af82aeec55474cad6542c3560fbd44
+run_name: stately-snail-464
+run_uuid: 05af82aeec55474cad6542c3560fbd44
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711261211122
+status: 3
+tags: []
+user_id: toonies

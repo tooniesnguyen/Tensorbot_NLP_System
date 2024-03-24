@@ -1,5 +1,6 @@
 from nltk.translate import bleu_score
 from nltk.tokenize import TweetTokenizer
+from utils import calc_bleu
 
 # Khởi tạo đối tượng tokenizer
 tokenizer = TweetTokenizer()
@@ -13,20 +14,16 @@ def calc_bleu_many(cand_seq, ref_sequences):
                                     weights=(0.5, 0.5))
 
 # Chuỗi dự đoán
-cand_seq = "current popular methods are statistical"
+cand_seq = "I am impossible answer this question"
 # Danh sách các chuỗi tham chiếu
-ref_sequences = [
-    "currently popular approaches include statistical methods",
-    "current popular methods involve statistics",
-    "statistical methods are currently popular"
-]
+ref_sequences = "I am impossible answer this question"
 
 # Tách từ trong chuỗi dự đoán và các chuỗi tham chiếu
 cand_tokens = tokenizer.tokenize(cand_seq)
 ref_tokens_list = [tokenizer.tokenize(ref_seq) for ref_seq in ref_sequences]
 
 # Tính toán BLEU score cho nhiều chuỗi tham chiếu
-bleu_score_many = calc_bleu_many(cand_tokens, ref_tokens_list)
+bleu_score_many = calc_bleu(cand_seq, ref_sequences)
 
 # In kết quả BLEU score
 print("BLEU score:", bleu_score_many)
