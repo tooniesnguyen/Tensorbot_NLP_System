@@ -67,31 +67,40 @@ def evaluateRandomly(model,obj_data, n=10):
     return __bleu_mean/n
 
 
+
+
+
 def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, criterion):
     total_loss = 0
-    total_bleu = 0
+    total_bleu_argmax = 0
     
     total_bleu_valid = 0
     for data in dataloader:
         src_tensor, valid_len_src, trg_tensor = data
         
         model_optimizer.zero_grad()
-        _, decoder_outputs = model(src_tensor, valid_len_src, trg_tensor)
+        decoder_outputs = model(src_tensor, valid_len_src, trg_tensor)
         
-        ################################ Calculate BLEU of Train ####################################
-        
+        ################################ BLEU of Train  Argmax #####################################
         _, topi = decoder_outputs[-1].topk(1)
         decoded_ids = topi.squeeze()
-        
-        output_decoded = decoder_word(decoded_ids, object_lang)
+
+        output_decoded_argmax = decoder_word(decoded_ids, object_lang)
         trg_decoded = decoder_word(trg_tensor[-1], object_lang)
-        # print("bleu score ", calc_bleu(output_decoded, trg_decoded))
+        # print("bleu score ", calc_bleu(output_decoded_argmax, trg_decoded))
         
-        total_bleu += calc_bleu(output_decoded, trg_decoded)
+        total_bleu_argmax += calc_bleu(output_decoded_argmax, trg_decoded)
         #############################################################################################
         
+        ################################ BLEU of Train  Sample #####################################
         
         
+        
+        #############################################################################################
+
+
+
+
         ################################ Calculate BLEU of Valid ####################################
         bleu_mean_valid = evaluateRandomly(model,val_pairs)
         total_bleu_valid += bleu_mean_valid
@@ -107,7 +116,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         total_loss += loss.item()
         
-    return total_loss/len(dataloader), total_bleu/len(dataloader), total_bleu_valid/len(dataloader)
+    return total_loss/len(dataloader), total_bleu_argmax/len(dataloader), total_bleu_valid/len(dataloader)
 
 
 
@@ -117,37 +126,37 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
     start = time.time()
     plot_losses = []
     print_loss_total = 0
-    print_bleu_total = 0 
+    print_bleu_total_argmax = 0 
     print_bleu_valid_total = 0
     model_optimizer = optim.Adam(model.parameters(), lr = learning_rate)
     criterion = nn.NLLLoss()
     
     for epoch in range(1, n_epochs + 1):
-        loss, bleu_score, bleu_score_valid = train_epoch(dataloader=train_dataloader, val_pairs = val_pairs,object_lang = object_lang, model = model,
+        loss, bleu_score_argmax, bleu_score_valid = train_epoch(dataloader=train_dataloader, val_pairs = val_pairs,object_lang = object_lang, model = model,
                            model_optimizer = model_optimizer,criterion= criterion)
         
         print_loss_total += loss
-        print_bleu_total += bleu_score
+        print_bleu_total_argmax += bleu_score_argmax
         print_bleu_valid_total += bleu_score_valid
         
         
         if epoch % print_every == 0:
             print_loss_avg = print_loss_total / print_every
-            print_bleu_avg = print_bleu_total/ print_every
+            print_bleu_avg_argmax = print_bleu_total_argmax/ print_every
             print_bleu_valid_avg = print_bleu_valid_total/print_every
             
             ######################### PLOT MLFLOW ##########################
             mlflow.log_metric("train_loss", print_loss_avg)
-            mlflow.log_metric("train_bleu_score", print_bleu_avg)
+            mlflow.log_metric("train_bleu_score_argmax", print_bleu_avg_argmax)
             
             mlflow.log_metric("valid_bleu_score", print_bleu_valid_avg)
             ################################################################
-            print_bleu_total = 0 
+            print_bleu_total_argmax = 0 
             print_loss_total = 0
             print_bleu_valid_total = 0
             
             print('%s (%d %d%%) loss %.4f  bleu_score %.4f, bleu_score_valid %.4f' % (timeSince(start, epoch / n_epochs),
-                                        epoch, epoch / n_epochs * 100, print_loss_avg, print_bleu_avg, print_bleu_valid_avg))
+                                        epoch, epoch / n_epochs * 100, print_loss_avg, print_bleu_avg_argmax, print_bleu_valid_avg))
             
             
             ###################### SAVE MODEL ##########################
@@ -158,8 +167,8 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
 
 def run():
 
-    QA_data = Load_Data(data_path=json_path_train,save_dict=True, dict_path = dict_path , mode_load="train", 
-                        type_data="json", max_len=MAX_LENGTH, device = device)
+    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
+                        type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)

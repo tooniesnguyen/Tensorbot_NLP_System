@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/004dca559e494d14acba652b5c6104c3/artifacts
+end_time: 1711267129942
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 004dca559e494d14acba652b5c6104c3
+run_name: flawless-panda-835
+run_uuid: 004dca559e494d14acba652b5c6104c3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711266971557
+status: 3
+tags: []
+user_id: toonies

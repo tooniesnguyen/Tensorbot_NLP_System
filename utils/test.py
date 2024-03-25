@@ -14,9 +14,9 @@ def calc_bleu_many(cand_seq, ref_sequences):
                                     weights=(0.5, 0.5))
 
 # Chuỗi dự đoán
-cand_seq = "I am impossible answer this question"
+cand_seq = "222 2323"
 # Danh sách các chuỗi tham chiếu
-ref_sequences = "I am impossible answer this question"
+ref_sequences = "222 2323"
 
 # Tách từ trong chuỗi dự đoán và các chuỗi tham chiếu
 cand_tokens = tokenizer.tokenize(cand_seq)
