@@ -13,7 +13,7 @@ class Transformer(nn.Module):
     def forward(self, src, valid_len_src = None, trg = None):
         encoder_src = self.encoder(src, valid_len_src)
         decoder_state = self.decoder.init_state(encoder_src)
-        output_nonsoftmax, output = self.decoder(decoder_state, trg)
-        return output_nonsoftmax, output
+        output = self.decoder(decoder_state, trg)
+        return output
     
         

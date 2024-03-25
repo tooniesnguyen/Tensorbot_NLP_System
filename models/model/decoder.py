@@ -46,10 +46,9 @@ class TransformerDecoder(nn.Module):
         # Ensure decoder_outputs is a tuple before passing it to torch.cat
         
         # print("Shape after concat ", decoder_outputs.shape)
-        decoder_outputs_nonsoftmax = torch.clone(decoder_outputs)
-        decoder_outputs = F.log_softmax(decoder_outputs, dim=-1)
+        # decoder_outputs = F.log_softmax(decoder_outputs, dim=-1)
         
-        return decoder_outputs_nonsoftmax, decoder_outputs
+        return decoder_outputs
 
     def forward_step(self, input_paralell, state):
         X = self.pos_encoding(self.embedding(input_paralell) * math.sqrt(self.num_hiddens))

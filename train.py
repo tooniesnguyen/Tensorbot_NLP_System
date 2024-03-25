@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from models.model.transformer import Transformer
 from utils.data_loader import Load_Data, Lang
 from config import *
@@ -34,12 +35,7 @@ def decoder_word(index_sentence, object_lang):
 
 
 
-def evaluate(model, sentence, obj_data):
-    input_tensor = obj_data.tensorFromSentence(sentence)
-    decoder_outputs= model(input_tensor)
-    _, topi = decoder_outputs.topk(1)
-    decoded_ids = topi.squeeze()
-    
+
 
 
 def evaluateRandomly(model,obj_data, n=10):
@@ -53,7 +49,7 @@ def evaluateRandomly(model,obj_data, n=10):
     for __pair in __pairs_random:
         
         __pair_src_tensor = obj_data.tensorFromSentence(__pair[0])
-        _, __decoder_outputs= model(__pair_src_tensor)        
+        __decoder_outputs= F.log_softmax(model(__pair_src_tensor), dim=-1)        
         
         _, __topi = __decoder_outputs.topk(1)
         __decoded_ids = __topi.squeeze()
@@ -76,7 +72,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         src_tensor, valid_len_src, trg_tensor = data
         
         model_optimizer.zero_grad()
-        _, decoder_outputs = model(src_tensor, valid_len_src, trg_tensor)
+        decoder_outputs = F.log_softmax(model(src_tensor, valid_len_src, trg_tensor), dim=-1)  
         
         ################################ Calculate BLEU of Train ####################################
         
@@ -167,7 +163,7 @@ def run():
     
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100, print_every= 10)
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100, print_every= 1)
     
     
     
