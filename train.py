@@ -53,7 +53,7 @@ def evaluateRandomly(model,obj_data, n=10):
     for __pair in __pairs_random:
         
         __pair_src_tensor = obj_data.tensorFromSentence(__pair[0])
-        __decoder_outputs= model(__pair_src_tensor)        
+        _, __decoder_outputs= model(__pair_src_tensor)        
         
         _, __topi = __decoder_outputs.topk(1)
         __decoded_ids = __topi.squeeze()
