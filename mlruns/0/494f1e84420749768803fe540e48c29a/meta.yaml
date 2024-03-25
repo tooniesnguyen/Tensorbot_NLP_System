@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/494f1e84420749768803fe540e48c29a/artifacts
+end_time: 1711363349152
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 494f1e84420749768803fe540e48c29a
+run_name: abrasive-moose-951
+run_uuid: 494f1e84420749768803fe540e48c29a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711282147116
+status: 3
+tags: []
+user_id: hoangtv

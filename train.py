@@ -82,7 +82,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         _, topi = decoder_outputs[-1].topk(1)
         decoded_ids = topi.squeeze()
-        
+
         output_decoded = decoder_word(decoded_ids, object_lang)
         trg_decoded = decoder_word(trg_tensor[-1], object_lang)
         # print("bleu score ", calc_bleu(output_decoded, trg_decoded))
@@ -113,7 +113,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
 
 
 def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate=0.001,
-               print_every=10, plot_every=100):
+               print_every=10):
     start = time.time()
     plot_losses = []
     print_loss_total = 0
@@ -167,7 +167,7 @@ def run():
     
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100, print_every= 10)
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 1000, print_every= 10)
     
     
     
