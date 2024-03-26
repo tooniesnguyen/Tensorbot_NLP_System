@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from models.model.transformer import Transformer
 from utils.data_loader import Load_Data, Lang
 from config import *
@@ -34,12 +35,7 @@ def decoder_word(index_sentence, object_lang):
 
 
 
-def evaluate(model, sentence, obj_data):
-    input_tensor = obj_data.tensorFromSentence(sentence)
-    decoder_outputs= model(input_tensor)
-    _, topi = decoder_outputs.topk(1)
-    decoded_ids = topi.squeeze()
-    
+
 
 
 def evaluateRandomly(model,obj_data, n=10):
@@ -53,7 +49,7 @@ def evaluateRandomly(model,obj_data, n=10):
     for __pair in __pairs_random:
         
         __pair_src_tensor = obj_data.tensorFromSentence(__pair[0])
-        __decoder_outputs= model(__pair_src_tensor)        
+        __decoder_outputs= F.log_softmax(model(__pair_src_tensor), dim=-1)    
         
         _, __topi = __decoder_outputs.topk(1)
         __decoded_ids = __topi.squeeze()
@@ -70,30 +66,40 @@ def evaluateRandomly(model,obj_data, n=10):
 
 
 
+
+
 def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, criterion):
     total_loss = 0
     total_bleu_argmax = 0
     
     total_bleu_valid = 0
+    
+    bleus_argmax = []
+    bleus_sample = []
     for data in dataloader:
         src_tensor, valid_len_src, trg_tensor = data
         
         model_optimizer.zero_grad()
-        decoder_outputs = model(src_tensor, valid_len_src, trg_tensor)
+        decoder_outputs = model(src_tensor, valid_len_src, trg_tensor) # output (32, 10, 488) with 488 is bag of words
         
         ################################ BLEU of Train  Argmax #####################################
-        _, topi = decoder_outputs[-1].topk(1)
-        decoded_ids = topi.squeeze()
+        for decoder_output in decoder_outputs:
+            r_outputs = torch.clone(decoder_output)
+            _, topi = decoder_output.topk(1)
+            decoded_ids = topi.squeeze()
 
-        output_decoded_argmax = decoder_word(decoded_ids, object_lang)
-        trg_decoded = decoder_word(trg_tensor[-1], object_lang)
-        # print("bleu score ", calc_bleu(output_decoded_argmax, trg_decoded))
-        
-        total_bleu_argmax += calc_bleu(output_decoded_argmax, trg_decoded)
+            actions = decoder_word(decoded_ids, object_lang)
+            ref_indices = decoder_word(trg_tensor[-1], object_lang)
+            argmax_bleu = calc_bleu(actions, ref_indices)
+            bleus_argmax.append(argmax_bleu)
         #############################################################################################
         
         ################################ BLEU of Train  Sample #####################################
-        
+            for _ in range(num_samples):
+                samples_idx = torch.multinomial(out_probs, 1, replacement=True)
+                decoded_samples_ids = topi.squeeze()
+                actions = decoder_word(decoded_samples_ids, object_lang)
+                sample_bleu = calc_bleu(actions, ref_indices)
         
         
         #############################################################################################

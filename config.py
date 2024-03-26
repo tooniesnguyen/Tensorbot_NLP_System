@@ -27,5 +27,9 @@ MAX_LENGTH = 10
 batch_size = 32
 hidden_size = 128
 
+
+num_samples = 5
+
+
 if __name__ == "__main__":
     print(WORK_DIR)
