@@ -62,12 +62,6 @@ def evaluateRandomly(model,obj_data, n=10):
     # print("Bleu return ", __bleu_mean/n)
     return __bleu_mean/n
 
-
-
-
-
-
-
 def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, criterion):
     total_loss = 0
     total_bleu_argmax = 0
@@ -83,6 +77,10 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         decoder_outputs = model(src_tensor, valid_len_src, trg_tensor) # output (32, 10, 488) with 488 is bag of words
         
         ################################ BLEU of Train  Argmax #####################################
+        net_policies = []
+        net_actions = []
+        net_advantages = []
+        
         for decoder_output in decoder_outputs:
             r_outputs = torch.clone(decoder_output)
             _, topi = decoder_output.topk(1)
@@ -96,12 +94,16 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         ################################ BLEU of Train  Sample #####################################
             for _ in range(num_samples):
-                samples_idx = torch.multinomial(out_probs, 1, replacement=True)
+                samples_idx = torch.multinomial(r_outputs, 1, replacement=True)
                 decoded_samples_ids = topi.squeeze()
                 actions = decoder_word(decoded_samples_ids, object_lang)
                 sample_bleu = calc_bleu(actions, ref_indices)
-        
-        
+                net_policies.append(r_outputs)
+                net_actions.append(actions)
+                
+                adv = sample_bleu - argmax_bleu
+                net_advantages.extend([adv]*len(actions))
+                bleus_sample.append(sample_bleu)
         #############################################################################################
 
 
@@ -112,13 +114,17 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         total_bleu_valid += bleu_mean_valid
         #############################################################################################
 
-        loss = criterion(
-            decoder_outputs.view(-1, decoder_outputs.size(-1)),
-            trg_tensor.view(-1)
-        )
-        loss.backward()
+        policies_v = torch.cat(net_policies)
+        actions_t = torch.LongTensor(net_actions).to(device)
+        adv_v = torch.FloatTensor(net_advantages).to(device)
+        log_prob_v = F.log_softmax(policies_v, dim=1)
+        lp_a = log_prob_v[range(len(net_actions)),actions_t]
+        log_prob_actions_v = adv_v * lp_a
+        loss_policy_v = -log_prob_actions_v.mean()
         
-        model_optimizer.step()
+        loss_v = loss_policy_v
+        loss_v.backward()
+        optimiser.step()
         
         total_loss += loss.item()
         
@@ -166,7 +172,8 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             
             
             ###################### SAVE MODEL ##########################
-            name_file_pth = f"{PATH_SAVE}/epoch{str(epoch)}.pth"
+            os.makedirs(f"{PATH_SAVE_RL}", exist_ok=True)  
+            name_file_pth = f"{PATH_SAVE_RL}/epoch{str(epoch)}.pth"
             torch.save(model, name_file_pth)
             print("Saved model successfull")
             ############################################################
@@ -176,9 +183,12 @@ def run():
     QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
                         type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
+    
+    # path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
+    # print(path_save)
+    # model = torch.load(path_save).to(device)
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
-    
     
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)

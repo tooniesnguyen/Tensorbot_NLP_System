@@ -154,8 +154,8 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
 
 def run():
 
-    QA_data = Load_Data(data_path=json_path_train,save_dict=True, dict_path = dict_path , mode_load="train", 
-                        type_data="json", max_len=MAX_LENGTH, device = device)
+    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
+                        type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
@@ -163,7 +163,7 @@ def run():
     
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100+1, print_every= 2)
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100+1, print_every= 10)
     
     
     

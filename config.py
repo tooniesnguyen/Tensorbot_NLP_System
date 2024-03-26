@@ -16,7 +16,7 @@ json_path_train = f"{WORK_DIR}/Tensorbot_NLP/data/train-v2.0.json"
 json_path_dev = f"{WORK_DIR}/Tensorbot_NLP/data/dev-v2.0.json"
 dict_path = f"{WORK_DIR}/Tensorbot_NLP/data/dicts/lang_obj.pkl"
 PATH_SAVE = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask"
-
+PATH_SAVE_RL = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask_rl"
 path = "runs"
 SOS_token = 0
 EOS_token = 1
