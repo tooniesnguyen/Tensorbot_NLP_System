@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from models.model.transformer import Transformer
 from utils.data_loader import Load_Data, Lang
 from config import *
@@ -22,7 +23,7 @@ def evaluate(model, sentence, obj_data):
     with torch.no_grad():
         input_tensor = obj_data.tensorFromSentence(sentence)
 
-        decoder_outputs= model(input_tensor)
+        decoder_outputs= F.log_softmax(model(input_tensor),dim = -1)
 
         _, topi = decoder_outputs.topk(1)
         decoded_ids = topi.squeeze()
@@ -65,7 +66,7 @@ def run():
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
         
-    model = torch.load(PATH_SAVE)
+    model = torch.load(f"{PATH_SAVE_RL}/epoch1000.pth")
     model.to(device)
     model.eval()
     

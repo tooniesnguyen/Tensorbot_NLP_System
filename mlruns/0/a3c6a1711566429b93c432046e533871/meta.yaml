@@ -1,5 +1,5 @@
 artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/a3c6a1711566429b93c432046e533871/artifacts
-end_time: null
+end_time: 1711470122478
 entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
@@ -10,6 +10,6 @@ source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1711467452772
-status: 1
+status: 3
 tags: []
 user_id: hoangtv

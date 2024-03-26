@@ -77,19 +77,19 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         net_actions = []
         net_advantages = []
         
-        for decoder_output in decoder_outputs:
+        for idx, decoder_output in enumerate(decoder_outputs):
             r_outputs = torch.clone(decoder_output)
             _, topi = decoder_output.topk(1)
             decoded_ids = topi.squeeze()
 
             actions = decoder_word(decoded_ids, object_lang)
-            ref_indices = decoder_word(trg_tensor[-1], object_lang)
+            ref_indices = decoder_word(trg_tensor[idx], object_lang)
             argmax_bleu = calc_bleu(actions, ref_indices)
             bleus_argmax.append(argmax_bleu)
         #############################################################################################
         
         ################################ BLEU of Train  Sample #####################################
-            for _ in range(num_samples):
+            for _ in range(4):
                 decoder_output_sm = F.softmax(decoder_output, dim = -1)
                 action_sample = torch.multinomial(decoder_output_sm, 1, replacement=True)
                 decoded_samples_ids = action_sample.squeeze()
@@ -131,7 +131,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
 
 
 def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate=0.001,
-               print_every=10, plot_every=100):
+               print_every=10, save_epoch=10):
     start = time.time()
     plot_losses = []
     print_loss_total = 0
@@ -166,12 +166,12 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             print('%s (%d %d%%) loss %.4f  bleu_score %.4f, bleu_score_valid %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg, print_bleu_avg_argmax, print_bleu_valid_avg))
             
-            
+            if epoch % save_epoch == 0:
             ###################### SAVE MODEL ##########################
-            os.makedirs(f"{PATH_SAVE_RL}", exist_ok=True)  
-            name_file_pth = f"{PATH_SAVE_RL}/epoch{str(epoch)}.pth"
-            torch.save(model, name_file_pth)
-            print("Saved model successfull")
+                os.makedirs(f"{PATH_SAVE_RL}", exist_ok=True)  
+                name_file_pth = f"{PATH_SAVE_RL}/epoch{str(epoch)}.pth"
+                torch.save(model, name_file_pth)
+                print("Saved model successfull")
             ############################################################
 
 def run():
@@ -180,11 +180,7 @@ def run():
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     
     path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
-    print(path_save)
     model = torch.load(path_save).to(device)
-    # model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
-    #                     vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
-    
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
     train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 1000, print_every= 10)
