@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/7c1c5e7b868b4c84a08e7c03769f590c/artifacts
+end_time: 1711464938948
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7c1c5e7b868b4c84a08e7c03769f590c
+run_name: chill-bird-975
+run_uuid: 7c1c5e7b868b4c84a08e7c03769f590c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711464855422
+status: 3
+tags: []
+user_id: hoangtv

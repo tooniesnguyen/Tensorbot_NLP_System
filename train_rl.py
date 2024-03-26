@@ -33,11 +33,6 @@ def decoder_word(index_sentence, object_lang):
     decoded_sentence = decoded_sentence[:-5]
     return decoded_sentence
 
-
-
-
-
-
 def evaluateRandomly(model,obj_data, n=10):
     '''
     Input: [["Ques_1", "Answer 1"], ["Ques_2", "Answer 2"], ...]
@@ -56,10 +51,12 @@ def evaluateRandomly(model,obj_data, n=10):
         __decoded_id2word = decoder_word(__decoded_ids, obj_data.object_lang)
         
         __bleu_mean += calc_bleu(__decoded_id2word,  __pair[1])
-        
+    
+    # print("------------------------------------------------------------------------------")
+    # print("Reference text: ", __pair[1])        
     # print("Predict text: ",__decoded_id2word)
-    # print("Reference text: ", __pair[1])
     # print("Bleu return ", __bleu_mean/n)
+    # print("------------------------------------------------------------------------------")    
     return __bleu_mean/n
 
 def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, criterion):
@@ -72,7 +69,6 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
     bleus_sample = []
     for data in dataloader:
         src_tensor, valid_len_src, trg_tensor = data
-        
         model_optimizer.zero_grad()
         decoder_outputs = model(src_tensor, valid_len_src, trg_tensor) # output (32, 10, 488) with 488 is bag of words
         
@@ -94,15 +90,16 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         ################################ BLEU of Train  Sample #####################################
             for _ in range(num_samples):
-                samples_idx = torch.multinomial(r_outputs, 1, replacement=True)
-                decoded_samples_ids = topi.squeeze()
-                actions = decoder_word(decoded_samples_ids, object_lang)
-                sample_bleu = calc_bleu(actions, ref_indices)
+                decoder_output_sm = F.softmax(decoder_output, dim = -1)
+                action_sample = torch.multinomial(decoder_output_sm, 1, replacement=True)
+                decoded_samples_ids = action_sample.squeeze()
+                action_decoder = decoder_word(decoded_samples_ids, object_lang)
+                sample_bleu = calc_bleu(action_decoder, ref_indices)
                 net_policies.append(r_outputs)
-                net_actions.append(actions)
-                
+                net_actions.extend(action_sample)
+            
                 adv = sample_bleu - argmax_bleu
-                net_advantages.extend([adv]*len(actions))
+                net_advantages.extend([adv]*len(action_sample))
                 bleus_sample.append(sample_bleu)
         #############################################################################################
 
@@ -124,11 +121,11 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         loss_v = loss_policy_v
         loss_v.backward()
-        optimiser.step()
+        model_optimizer.step()
         
-        total_loss += loss.item()
+        total_loss += loss_v.item()
         
-    return total_loss/len(dataloader), total_bleu_argmax/len(dataloader), total_bleu_valid/len(dataloader)
+    return total_loss/len(dataloader), sum(bleus_argmax)/len(bleus_argmax), total_bleu_valid/len(dataloader)
 
 
 
@@ -146,7 +143,6 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
     for epoch in range(1, n_epochs + 1):
         loss, bleu_score_argmax, bleu_score_valid = train_epoch(dataloader=train_dataloader, val_pairs = val_pairs,object_lang = object_lang, model = model,
                            model_optimizer = model_optimizer,criterion= criterion)
-        
         print_loss_total += loss
         print_bleu_total_argmax += bleu_score_argmax
         print_bleu_valid_total += bleu_score_valid
@@ -179,20 +175,19 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             ############################################################
 
 def run():
-
     QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
                         type_data="csv", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
     
-    # path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
-    # print(path_save)
-    # model = torch.load(path_save).to(device)
-    model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
-                        vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
+    path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
+    print(path_save)
+    model = torch.load(path_save).to(device)
+    # model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
+    #                     vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
     
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100, print_every= 10)
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 1000, print_every= 10)
     
     
     

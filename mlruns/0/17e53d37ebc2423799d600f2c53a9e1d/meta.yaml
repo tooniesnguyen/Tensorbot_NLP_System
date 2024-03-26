@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/17e53d37ebc2423799d600f2c53a9e1d/artifacts
+end_time: 1711464698661
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 17e53d37ebc2423799d600f2c53a9e1d
+run_name: upset-snake-605
+run_uuid: 17e53d37ebc2423799d600f2c53a9e1d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711464180795
+status: 3
+tags: []
+user_id: hoangtv
