@@ -16,7 +16,7 @@ import json
 import pickle
 
 class Load_Data:
-    def __init__(self, data_path = None, dict_path = None,save_dict = True, mode_load = "train", type_data = "json" , max_len = 10, device = "Cuda"):
+    def __init__(self, data_path = None, dict_path = None,save_dict = True, mode_load = "train", type_data = "json" , max_len = 10, device = "cuda"):
         self.device = device
         self.max_len = max_len
         if mode_load == "train":

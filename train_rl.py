@@ -11,8 +11,11 @@ import math
 import shutil
 import os
 import random
+import numpy as np
 import warnings 
 warnings.filterwarnings('ignore') 
+torch.jit.enable_onednn_fusion(True)
+torch.backends.cudnn.benchmark = True
 
 import mlflow
 import mlflow.pytorch
@@ -21,22 +24,16 @@ from mlflow.models import infer_signature
 mlflow.pytorch.autolog()
 
 
-
 def decoder_word(index_sentence, object_lang):
     decoded_words = []
     for idx in index_sentence:
         if idx.item() == EOS_token:
-            decoded_words.append('<EOS>')
+            # decoded_words.append('<EOS>')
             break
         decoded_words.append(object_lang.index2word[idx.item()])
     decoded_sentence = ' '.join(decoded_words)
-    decoded_sentence = decoded_sentence[:-5]
+    decoded_sentence = decoded_sentence
     return decoded_sentence
-
-
-
-
-
 
 def evaluateRandomly(model,obj_data, n=10):
     '''
@@ -56,10 +53,12 @@ def evaluateRandomly(model,obj_data, n=10):
         __decoded_id2word = decoder_word(__decoded_ids, obj_data.object_lang)
         
         __bleu_mean += calc_bleu(__decoded_id2word,  __pair[1])
-        
+    
+    # print("------------------------------------------------------------------------------")
+    # print("Reference text: ", __pair[1])        
     # print("Predict text: ",__decoded_id2word)
-    # print("Reference text: ", __pair[1])
     # print("Bleu return ", __bleu_mean/n)
+    # print("------------------------------------------------------------------------------")    
     return __bleu_mean/n
 
 def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, criterion):
@@ -72,7 +71,6 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
     bleus_sample = []
     for data in dataloader:
         src_tensor, valid_len_src, trg_tensor = data
-        
         model_optimizer.zero_grad()
         decoder_outputs = model(src_tensor, valid_len_src, trg_tensor) # output (32, 10, 488) with 488 is bag of words
         
@@ -81,39 +79,44 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         net_actions = []
         net_advantages = []
         
-        for decoder_output in decoder_outputs:
+        for idx, decoder_output in enumerate(decoder_outputs):
             r_outputs = torch.clone(decoder_output)
             _, topi = decoder_output.topk(1)
             decoded_ids = topi.squeeze()
 
             actions = decoder_word(decoded_ids, object_lang)
-            ref_indices = decoder_word(trg_tensor[-1], object_lang)
+            ref_indices = decoder_word(trg_tensor[idx], object_lang)
             argmax_bleu = calc_bleu(actions, ref_indices)
             bleus_argmax.append(argmax_bleu)
+            
+            if argmax_bleu > 0.99:
+                continue
         #############################################################################################
         
         ################################ BLEU of Train  Sample #####################################
             for _ in range(num_samples):
-                samples_idx = torch.multinomial(r_outputs, 1, replacement=True)
-                decoded_samples_ids = topi.squeeze()
-                actions = decoder_word(decoded_samples_ids, object_lang)
-                sample_bleu = calc_bleu(actions, ref_indices)
+                decoder_output_sm = F.softmax(decoder_output, dim = -1)
+                action_sample = torch.multinomial(decoder_output_sm, 1, replacement=True)
+                decoded_samples_ids = action_sample.squeeze()
+                action_decoder = decoder_word(decoded_samples_ids, object_lang)
+                sample_bleu = calc_bleu(action_decoder, ref_indices)
                 net_policies.append(r_outputs)
-                net_actions.append(actions)
-                
+                net_actions.extend(action_sample)
+            
                 adv = sample_bleu - argmax_bleu
-                net_advantages.extend([adv]*len(actions))
+                net_advantages.extend([adv]*len(action_sample))
                 bleus_sample.append(sample_bleu)
+
         #############################################################################################
-
-
-
-
+        
         ################################ Calculate BLEU of Valid ####################################
         bleu_mean_valid = evaluateRandomly(model,val_pairs)
         total_bleu_valid += bleu_mean_valid
         #############################################################################################
 
+        if not net_policies:
+            continue
+        
         policies_v = torch.cat(net_policies)
         actions_t = torch.LongTensor(net_actions).to(device)
         adv_v = torch.FloatTensor(net_advantages).to(device)
@@ -121,20 +124,20 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         lp_a = log_prob_v[range(len(net_actions)),actions_t]
         log_prob_actions_v = adv_v * lp_a
         loss_policy_v = -log_prob_actions_v.mean()
-        
         loss_v = loss_policy_v
         loss_v.backward()
-        optimiser.step()
+        model_optimizer.step()
         
-        total_loss += loss.item()
+        total_loss += loss_v.item()
         
-    return total_loss/len(dataloader), total_bleu_argmax/len(dataloader), total_bleu_valid/len(dataloader)
+        # print(bleus_argmax)
+    return total_loss/len(dataloader), sum(bleus_argmax)/len(bleus_argmax), total_bleu_valid/len(dataloader)
 
 
 
 
-def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate=0.001,
-               print_every=10, plot_every=100):
+def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate= 1e-4,
+               print_every=10, save_epoch=100):
     start = time.time()
     plot_losses = []
     print_loss_total = 0
@@ -146,7 +149,6 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
     for epoch in range(1, n_epochs + 1):
         loss, bleu_score_argmax, bleu_score_valid = train_epoch(dataloader=train_dataloader, val_pairs = val_pairs,object_lang = object_lang, model = model,
                            model_optimizer = model_optimizer,criterion= criterion)
-        
         print_loss_total += loss
         print_bleu_total_argmax += bleu_score_argmax
         print_bleu_valid_total += bleu_score_valid
@@ -159,7 +161,7 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             
             ######################### PLOT MLFLOW ##########################
             mlflow.log_metric("train_loss", print_loss_avg)
-            mlflow.log_metric("train_bleu_score_argmax", print_bleu_avg_argmax)
+            mlflow.log_metric("train_bleu_score", print_bleu_avg_argmax)
             
             mlflow.log_metric("valid_bleu_score", print_bleu_valid_avg)
             ################################################################
@@ -170,31 +172,27 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             print('%s (%d %d%%) loss %.4f  bleu_score %.4f, bleu_score_valid %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg, print_bleu_avg_argmax, print_bleu_valid_avg))
             
-            
+            if epoch % save_epoch == 0:
             ###################### SAVE MODEL ##########################
-            os.makedirs(f"{PATH_SAVE_RL}", exist_ok=True)  
-            name_file_pth = f"{PATH_SAVE_RL}/epoch{str(epoch)}.pth"
-            torch.save(model, name_file_pth)
-            print("Saved model successfull")
+                os.makedirs(f"{PATH_SAVE_RL}", exist_ok=True)  
+                name_file_pth = f"{PATH_SAVE_RL}/epoch{str(epoch)}.pth"
+                torch.save(model, name_file_pth)
+                print("Saved model successfull")
             ############################################################
 
 def run():
-
-    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
-                        type_data="csv", max_len=MAX_LENGTH, device = device)
+    QA_data = Load_Data(data_path=json_path_train,save_dict=True, dict_path = dict_path_json , mode_load="train", 
+                        type_data="json", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
-    
-    # path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
-    # print(path_save)
-    # model = torch.load(path_save).to(device)
-    model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
-                        vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
-    
-    valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
+    print("Use device ", device)
+
+    mlflow.log_param("lr", learning_rate)
+    mlflow.log_param("epoch_th", epoch_th)
+    path_save = os.path.join(f"{PATH_SAVE}", f"epoch{epoch_th}.pth")
+    model = torch.load(path_save).to(device)
+    valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path_json, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100, print_every= 10)
-    
-    
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 2000, print_every= 1)
     
 if __name__ == "__main__":
     run()

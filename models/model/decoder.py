@@ -6,7 +6,7 @@ import math
 import torch.nn.functional as F
 
 class TransformerDecoder(nn.Module):
-    def __init__(self, vocab_size, num_hiddens,max_len = 10, device = "cpu", beg_token = 0, ffn_num_hiddens = 64, num_heads = 4, num_blks = 2, dropout = 0.1):
+    def __init__(self, vocab_size, num_hiddens,max_len = 10, device = None, beg_token = 0, ffn_num_hiddens = 64, num_heads = 4, num_blks = 2, dropout = 0.1):
         super().__init__()
         self.max_len = max_len
         self.beg_token = beg_token

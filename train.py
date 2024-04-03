@@ -34,10 +34,6 @@ def decoder_word(index_sentence, object_lang):
     return decoded_sentence
 
 
-
-
-
-
 def evaluateRandomly(model,obj_data, n=10):
     '''
     Input: [["Ques_1", "Answer 1"], ["Ques_2", "Answer 2"], ...]
@@ -97,10 +93,9 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
             decoder_outputs.view(-1, decoder_outputs.size(-1)),
             trg_tensor.view(-1)
         )
+        print("loss ", loss)
         loss.backward()
-        
         model_optimizer.step()
-        
         total_loss += loss.item()
         
     return total_loss/len(dataloader), total_bleu/len(dataloader), total_bleu_valid/len(dataloader)
@@ -108,8 +103,8 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
 
 
 
-def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate=0.001,
-               print_every=10, plot_every=100):
+def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate,
+               print_every=10, save_every=10):
     start = time.time()
     plot_losses = []
     print_loss_total = 0
@@ -145,25 +140,28 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             print('%s (%d %d%%) loss %.4f  bleu_score %.4f, bleu_score_valid %.4f' % (timeSince(start, epoch / n_epochs),
                                         epoch, epoch / n_epochs * 100, print_loss_avg, print_bleu_avg, print_bleu_valid_avg))
             
-            
+        if epoch % save_every == 0:
             ###################### SAVE MODEL ##########################
-            name_file_pth = f"{PATH_SAVE}/epoch{str(epoch)}.pth"
+            name_file_pth = f"{PATH_SAVE}/pretrain//epoch{str(epoch)}.pth"
             torch.save(model, name_file_pth)
             print("Saved model successfull")
             ############################################################
 
 def run():
 
-    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
-                        type_data="csv", max_len=MAX_LENGTH, device = device)
+    QA_data = Load_Data(data_path=json_path_train,save_dict=True, dict_path = dict_path_json , mode_load="train", 
+                        type_data="json", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
-    model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
-                        vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
+    # model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
+    #                     vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
+    mlflow.log_param("lr", learning_rate)
+    mlflow.log_param("epoch_th", epoch_th)
     
-    
-    valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
+    path_save = os.path.join(f"{PATH_SAVE}", f"epoch{epoch_th}.pth")
+    model = torch.load(path_save).to(device)
+    valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path_json, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 100+1, print_every= 10)
+    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model, n_epochs = 100,learning_rate=learning_rate, print_every= 1)
     
     
     
