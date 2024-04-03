@@ -11,7 +11,7 @@
 
 
 ## Traing Results
-- I trained these results on the SQUAD set
+- I trained these results on the SQUAD Dataset
 ## After 100 epoch
 ![image](./images/mlflow_train.jpg)
 
