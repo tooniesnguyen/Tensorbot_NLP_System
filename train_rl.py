@@ -94,11 +94,7 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         #############################################################################################
         
         ################################ BLEU of Train  Sample #####################################
-<<<<<<< HEAD
             for _ in range(num_samples):
-=======
-            for _ in range(4):
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
                 decoder_output_sm = F.softmax(decoder_output, dim = -1)
                 action_sample = torch.multinomial(decoder_output_sm, 1, replacement=True)
                 decoded_samples_ids = action_sample.squeeze()
@@ -134,22 +130,14 @@ def train_epoch(dataloader,val_pairs,object_lang , model, model_optimizer, crite
         
         total_loss += loss_v.item()
         
-<<<<<<< HEAD
         # print(bleus_argmax)
-=======
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
     return total_loss/len(dataloader), sum(bleus_argmax)/len(bleus_argmax), total_bleu_valid/len(dataloader)
 
 
 
 
-<<<<<<< HEAD
 def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate= 1e-4,
                print_every=10, save_epoch=100):
-=======
-def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_rate=0.001,
-               print_every=10, save_epoch=10):
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
     start = time.time()
     plot_losses = []
     print_loss_total = 0
@@ -193,7 +181,6 @@ def train(train_dataloader, val_pairs, object_lang, model, n_epochs, learning_ra
             ############################################################
 
 def run():
-<<<<<<< HEAD
     QA_data = Load_Data(data_path=json_path_train,save_dict=True, dict_path = dict_path_json , mode_load="train", 
                         type_data="json", max_len=MAX_LENGTH, device = device)
     obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
@@ -206,19 +193,6 @@ def run():
     valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path_json, mode_load="train",
                            type_data="json", max_len=MAX_LENGTH, device = device)
     train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 2000, print_every= 1)
-=======
-    QA_data = Load_Data(data_path=csv_path,save_dict=True, dict_path = dict_path , mode_load="train", 
-                        type_data="csv", max_len=MAX_LENGTH, device = device)
-    obj_lang, train_dataloader = QA_data.get_dataloader(batch_size = batch_size)
-    
-    path_save = os.path.join(f"{PATH_SAVE}", "epoch100.pth")
-    model = torch.load(path_save).to(device)
-    valid_data = Load_Data(data_path=json_path_dev,save_dict=False, dict_path = dict_path, mode_load="train",
-                           type_data="json", max_len=MAX_LENGTH, device = device)
-    train(train_dataloader, val_pairs=valid_data  ,object_lang = obj_lang ,model = model,n_epochs = 1000, print_every= 10)
-    
-    
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
     
 if __name__ == "__main__":
     run()

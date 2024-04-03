@@ -67,13 +67,8 @@ def run():
     model = Transformer(input_size = obj_lang.n_words, hidden_size=hidden_size,
                         vocab_size= obj_lang.n_words, max_len= MAX_LENGTH, device = device)
         
-<<<<<<< HEAD
     model = torch.load(f"{PATH_SAVE}/pretrain/epoch100.pth")
     model = model.to(device)
-=======
-    model = torch.load(f"{PATH_SAVE_RL}/epoch1000.pth")
-    model.to(device)
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
     model.eval()
     
     evaluateRandomly(model,QA_data, n=100)

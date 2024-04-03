@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 
-class PositionWiseFFN(nn.Module):  #@save
+class PositionWiseFFN(nn.Module):
     """The positionwise feed-forward network."""
     def __init__(self, ffn_num_hiddens, ffn_num_outputs):
         super().__init__()

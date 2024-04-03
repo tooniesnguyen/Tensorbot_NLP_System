@@ -17,13 +17,9 @@ json_path_dev = f"{WORK_DIR}/Tensorbot_NLP/data/dev-v2.0.json"
 dict_path_json = f"{WORK_DIR}/Tensorbot_NLP/data/dicts/lang_obj_json.pkl"
 dict_path_csv = f"{WORK_DIR}/Tensorbot_NLP/data/dicts/lang_obj_csv.pkl"
 PATH_SAVE = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask"
-<<<<<<< HEAD
 PATH_SAVE_CSV = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask_csv"
 PATH_SAVE_RL = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask_rl_5lr"
 PATH_SAVE_RL_CSV = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask_rlcsv"
-=======
-PATH_SAVE_RL = f"{WORK_DIR}/Tensorbot_NLP/runs/qatask_rl"
->>>>>>> a5bf4f0d86314f724c51e890d9da1ba56f348751
 
 path = "runs"
 SOS_token = 0
