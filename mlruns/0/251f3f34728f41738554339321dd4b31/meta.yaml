@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/251f3f34728f41738554339321dd4b31/artifacts
+end_time: 1711463419421
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 251f3f34728f41738554339321dd4b31
+run_name: burly-perch-973
+run_uuid: 251f3f34728f41738554339321dd4b31
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711463326607
+status: 3
+tags: []
+user_id: hoangtv

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/ac46dc47f4ec4c27a3f0890a3ec775f2/artifacts
+end_time: 1711467410517
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ac46dc47f4ec4c27a3f0890a3ec775f2
+run_name: sassy-mouse-89
+run_uuid: ac46dc47f4ec4c27a3f0890a3ec775f2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711467110107
+status: 3
+tags: []
+user_id: hoangtv

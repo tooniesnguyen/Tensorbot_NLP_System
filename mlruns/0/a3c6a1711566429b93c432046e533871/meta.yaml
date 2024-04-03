@@ -1,0 +1,15 @@
+artifact_uri: file:///home/toonies/Learn/Tensorbot_NLP/mlruns/0/a3c6a1711566429b93c432046e533871/artifacts
+end_time: 1711470122478
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a3c6a1711566429b93c432046e533871
+run_name: bittersweet-wolf-786
+run_uuid: a3c6a1711566429b93c432046e533871
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1711467452772
+status: 3
+tags: []
+user_id: hoangtv
