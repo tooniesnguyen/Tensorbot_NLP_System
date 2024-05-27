@@ -16,7 +16,7 @@ ROOT = FILE.parents[0]
 WORK_DIR = os.path.dirname(ROOT)
 
 JSON_DIR = f"{WORK_DIR}/data/dicts/intents.json"
-MODEL_DIR = f"{WORK_DIR}/models/best.pth"
+MODEL_DIR = f"{WORK_DIR}/models/LSTM.pth"
 
 
 def time_complexity(func):

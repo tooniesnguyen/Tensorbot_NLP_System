@@ -24,7 +24,7 @@ writer = SummaryWriter(f'{WORK_DIR}/models/runs/{type_model}')
 
 
 ############## CONFIG HYPERPARAMETER ##############
-NUM_EPOCHS = 200
+NUM_EPOCHS = 1000+1
 BATCH_SIZE = 8
 LEARNING_RATE = 0.0001
 HIDDEN_SIZE = 8
