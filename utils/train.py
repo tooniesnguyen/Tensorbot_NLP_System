@@ -10,17 +10,21 @@ import socket
 import os
 from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
 
+
+type_model = "LSTM"
 HOST = socket.gethostbyname(socket.gethostname())
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]
 WORK_DIR = os.path.dirname(ROOT)
-writer = SummaryWriter(f'{WORK_DIR}/models/runs/GRU')
+writer = SummaryWriter(f'{WORK_DIR}/models/runs/{type_model}')
 
 
 
 ############## CONFIG HYPERPARAMETER ##############
-NUM_EPOCHS = 1000
+NUM_EPOCHS = 200
 BATCH_SIZE = 8
 LEARNING_RATE = 0.0001
 HIDDEN_SIZE = 8
@@ -83,7 +87,9 @@ def main():
     json_dir = f"{WORK_DIR}/data/dicts/intents.json"
     data_process = Data_Preprocessing(json_dir)
     all_words, tags, _ =data_process.create_data()
-    X_train, y_train = data_process.X_y_split()
+    X, y = data_process.X_y_split()
+    X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.1, random_state=42)
+
     print("X_shape", X_train.shape)
     num_epochs = NUM_EPOCHS
     batch_size = BATCH_SIZE
@@ -97,7 +103,7 @@ def main():
                             shuffle=True,
                             num_workers=0)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Gru_Model(input_size, hidden_size, output_size).to(device)
+    model = Lstm_Model(input_size, hidden_size, output_size).to(device)
     model.count_parameter()
 
     criterion = nn.CrossEntropyLoss()
@@ -139,9 +145,33 @@ def main():
             running_loss = 0.0
 
     print(f'final loss: {loss.item():.4f}')
-    model.save_model(model, all_words, tags, f"{WORK_DIR}/models/best.pth")
+    model.save_model(model, all_words, tags, f"{WORK_DIR}/models/{type_model}.pth")
+    
+    ######################################## Validation Score #############################################
+    valid_dataset = ChatDataset(X_valid, y_valid)
+    valid_data_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
+    all_labels = []
+    all_preds = []
+    with torch.no_grad():
+        for words, labels in valid_data_loader:
+            words = words.to(device)
+            labels = labels.to(dtype=torch.long).to(device)
+            outputs = model(words)
+            _, predicted = torch.max(outputs.data, 1)
+            all_labels.extend(labels.cpu().numpy())
+            all_preds.extend(predicted.cpu().numpy())
 
+    # Print confusion matrix
+    print("Confusion Matrix:")
+    cm = confusion_matrix(all_labels, all_preds)
+    print(cm)
+
+    # Print classification report
+    print("\nClassification Report:")
+    cr = classification_report(all_labels, all_preds, target_names=tags)
+    print(cr)
+    
 
     
 if __name__ == "__main__":

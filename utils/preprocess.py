@@ -25,6 +25,7 @@ class Word_Processing:
         for idx, w in enumerate(words):
             if w in sentence_words: 
                 bag[idx] = 1
+            
         return bag
     
 if __name__ == "__main__":
