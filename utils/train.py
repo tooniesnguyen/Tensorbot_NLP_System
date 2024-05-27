@@ -12,6 +12,8 @@ from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 type_model = "LSTM"
@@ -24,7 +26,7 @@ writer = SummaryWriter(f'{WORK_DIR}/models/runs/{type_model}')
 
 
 ############## CONFIG HYPERPARAMETER ##############
-NUM_EPOCHS = 1000+1
+NUM_EPOCHS = 300
 BATCH_SIZE = 8
 LEARNING_RATE = 0.0001
 HIDDEN_SIZE = 8
@@ -165,8 +167,13 @@ def main():
     # Print confusion matrix
     print("Confusion Matrix:")
     cm = confusion_matrix(all_labels, all_preds)
-    print(cm)
-
+    plt.figure(figsize=(7, 5))
+    sns.heatmap(cm, cmap='Greens', annot=True, fmt='d', linewidths=4, annot_kws={'fontsize': 18}, 
+            yticklabels=['info', 'thanks', 'moving', 'tour'], xticklabels=['Predict info', 'Predict thanks', 'Predict moving', 'Predict tour'])
+    plt.yticks(rotation=0)
+    plt.title(f'Confusion Matrix of {type_model}')
+    plt.savefig(f"{WORK_DIR}/images/{type_model}.jpg")
+    plt.close()
     # Print classification report
     print("\nClassification Report:")
     cr = classification_report(all_labels, all_preds, target_names=tags)
