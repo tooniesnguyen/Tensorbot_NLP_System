@@ -1,5 +1,6 @@
 from .preprocess import Word_Processing
-from .model import Lstm_Model
+from .model import NN_Model
+from .conn_mongo import get_random_response
 import torch
 import json
 import sys
@@ -16,7 +17,7 @@ ROOT = FILE.parents[0]
 WORK_DIR = os.path.dirname(ROOT)
 
 JSON_DIR = f"{WORK_DIR}/data/dicts/intents.json"
-MODEL_DIR = f"{WORK_DIR}/models/LSTM.pth"
+MODEL_DIR = f"{WORK_DIR}/models/lstm.pth"
 
 
 def time_complexity(func):
@@ -49,7 +50,7 @@ class Tensorbot:
         self.tags = data['tags']
         model_state = data["model_state"]
 
-        model = Lstm_Model(input_size, hidden_size, output_size).to(self.device)
+        model = NN_Model(input_size, hidden_size, output_size).to(self.device)
         model.load_state_dict(model_state)
         model.eval()
         print("Load successful")
@@ -71,8 +72,7 @@ class Tensorbot:
         prob = probs[0][predicted.item()]
         if prob.item() > 0.75:
             for intent in self.intents['intents']:
-                if tag == intent["tag"]:
-                    text = random.choice(intent['responses'])
+                text = get_random_response(tag_name=tag)
         else:
             text = "I do not understand you"
             
@@ -132,9 +132,6 @@ class Tensorbot:
                     print(f"{self.bot_name}: I do not understand...")
             except sr.UnknownValueError:
                 print("Sorry, I could not understand.")
-
-class controller_tensorbot:
-    pass
 
 
 if __name__ == "__main__":

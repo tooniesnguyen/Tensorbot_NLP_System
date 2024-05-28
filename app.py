@@ -95,7 +95,6 @@ async def predict(message: Message):
         target = re.findall(PATTERN, text.lower())
         print("Robot moving")
 
-    
     elif tag == "info":
         target = re.findall(PATTERN, text.lower())
         response = retrieval_info(target[0])
