@@ -12,11 +12,12 @@ from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import StratifiedShuffleSplit
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-type_model = "LSTM"
+type_model = "rnn"
 HOST = socket.gethostbyname(socket.gethostname())
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]
@@ -26,7 +27,7 @@ writer = SummaryWriter(f'{WORK_DIR}/models/runs/{type_model}')
 
 
 ############## CONFIG HYPERPARAMETER ##############
-NUM_EPOCHS = 300
+NUM_EPOCHS = 800
 BATCH_SIZE = 8
 LEARNING_RATE = 0.0001
 HIDDEN_SIZE = 8
@@ -90,7 +91,10 @@ def main():
     data_process = Data_Preprocessing(json_dir)
     all_words, tags, _ =data_process.create_data()
     X, y = data_process.X_y_split()
-    X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.1, random_state=42)
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=42)
+    for train_index, valid_index in sss.split(X, y):
+        X_train, X_valid = X[train_index], X[valid_index]
+        y_train, y_valid = y[train_index], y[valid_index]
 
     print("X_shape", X_train.shape)
     num_epochs = NUM_EPOCHS
@@ -105,7 +109,7 @@ def main():
                             shuffle=True,
                             num_workers=0)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Lstm_Model(input_size, hidden_size, output_size).to(device)
+    model = NN_Model(input_size, hidden_size, output_size, type_model=type_model).to(device)
     model.count_parameter()
 
     criterion = nn.CrossEntropyLoss()

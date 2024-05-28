@@ -3,3 +3,4 @@ wordcloud
 nltk==3.6.7
 numpy == 1.26.1
 tensorboard
+seaborn
