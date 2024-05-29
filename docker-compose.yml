@@ -1,0 +1,22 @@
+version: "3"
+services:
+  mysql:
+    build: ./data/sql/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'tensorbot'
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'Nhan'      
+      MYSQL_PASSWORD: 'Nh@n'
+    ports:
+      - '3306:3306'
+
+  pythonapp:
+    build: ./
+    command: sh -c "sleep 10s ; python app.py"
+    depends_on:
+      - mysql
+    ports:
+      - '8008:8008'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

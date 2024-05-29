@@ -1,7 +1,12 @@
 FROM python:3.9
 
-RUN pip install -r requirements.txt
+EXPOSE 8008
 
-WORKDIR /usr/app/src
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY hello_world.py ./
+WORKDIR /usr/app/Tensorbot_NLP_System
+
+COPY . .
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8008", "-k", "uvicorn.workers.UvicornWorker", "app:app"]

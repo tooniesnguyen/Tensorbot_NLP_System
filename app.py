@@ -33,7 +33,6 @@ WORK_DIR = os.path.dirname(ROOT)
 
 PATTERN = get_list_target()
 
-
 app = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory=f"{WORK_DIR}/Tensorbot_NLP_System/static"), name="static")
 templates = Jinja2Templates(directory= f"{WORK_DIR}/Tensorbot_NLP_System/templates")
@@ -107,4 +106,4 @@ async def predict(message: Message):
     #     return JSONResponse(content={"answer": response})
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True, workers=Pool()._processes)
+    uvicorn.run("app:app", host="0.0.0.0", port=8008, reload=True, workers=Pool()._processes)

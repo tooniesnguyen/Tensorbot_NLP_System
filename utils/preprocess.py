@@ -4,7 +4,7 @@ import nltk
 
 # Uncomment the block below and run once to download the WordNet resource for lemmatization
 ############## Uncomment this block if not downloaded yet ##############
-# nltk.download('omw-1.4')
+nltk.download('punkt')
 #####################################################################
 
 # Import WordNetLemmatizer from NLTK

@@ -2,10 +2,11 @@ import mysql.connector
 
 # Configuration for connecting to the MySQL database
 db_config = {
-    "host": "localhost",
+    "host": "mysql", # Change localhost if dont run docker
     "user": "Nhan",
     "password": "Nh@n",
-    "database": "tensorbot"
+    "database": "tensorbot",
+    "port": "3306"
 }
 
 # Decorator to handle database connection and cursor management

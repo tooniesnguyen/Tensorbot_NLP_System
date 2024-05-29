@@ -1,0 +1,2 @@
+FROM mysql:latest
+COPY ./tensorbot2.sql /docker-entrypoint-initdb.d/
