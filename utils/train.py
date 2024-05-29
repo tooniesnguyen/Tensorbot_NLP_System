@@ -122,51 +122,65 @@ def main():
     running_correct = 0.0
     n_total_steps = len(train_loader) 
     for epoch in range(num_epochs):
+        # Iterate over batches in the training data
         for (words, labels) in train_loader:
+            # Move data to the appropriate device (GPU or CPU)
             words = words.to(device)
             labels = labels.to(dtype=torch.long).to(device)
             
-            # Forward pass
+            # Forward pass: compute predicted outputs
             outputs = model(words)
 
+            # Compute the loss
             loss = criterion(outputs, labels)
             
-            # Backward and optimize
+            # Backward pass and optimization: compute gradients and update model parameters
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
+            # Track training statistics
             running_loss += loss.item()
             _, predicted = torch.max(outputs.data, 1)
             running_correct += (predicted == labels).sum().item()
             # print("run corre", running_correct)
             
+        # Print epoch-wise statistics and log to TensorBoard every 100 epochs
         if (epoch+1) % 100 == 0:
             print (f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+            # Log training loss and accuracy to TensorBoard
             writer.add_scalar('training loss', running_loss / 10/ n_total_steps, epoch )
             running_accuracy = running_correct / (8*10) / n_total_steps 
             writer.add_scalar('accuracy', running_accuracy, epoch )
 
+            # Reset running statistics
             running_correct = 0
             running_loss = 0.0
 
+    # Print final loss after training
     print(f'final loss: {loss.item():.4f}')
+
+    # Save the trained model
     model.save_model(model, all_words, tags, f"{WORK_DIR}/models/{type_model}.pth")
     
     ######################################## Validation Score #############################################
+    # Create DataLoader for validation data
     valid_dataset = ChatDataset(X_valid, y_valid)
     valid_data_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
     all_labels = []
     all_preds = []
+    # Evaluate the model on validation data
     with torch.no_grad():
         for words, labels in valid_data_loader:
+            # Move data to the appropriate device (GPU or CPU)
             words = words.to(device)
             labels = labels.to(dtype=torch.long).to(device)
             outputs = model(words)
             _, predicted = torch.max(outputs.data, 1)
             all_labels.extend(labels.cpu().numpy())
             all_preds.extend(predicted.cpu().numpy())
+
 
     # Print confusion matrix
     print("Confusion Matrix:")
