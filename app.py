@@ -11,6 +11,8 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+from fastapi.responses import PlainTextResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from utils.nlp import Tensorbot
 from utils.conn_db import *
 # from utils.controller import PathFollowing2
@@ -55,7 +57,9 @@ class Message(BaseModel):
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
